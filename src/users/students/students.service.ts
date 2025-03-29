@@ -21,7 +21,7 @@ export class StudentsService {
   ){}
 
   async create(createStudentDto: CreateStudentDto) {
-    const { contact_email, password } = createStudentDto
+    const { contact_email, password, firstName, maternalSurname, paternalSurname } = createStudentDto
     // Extraemos email y password del DTO para encriptar la contraseña, y hacer la insersión de
     // email y password en la tabla Users para crear la relación con su student
     // Inicia una transacción
@@ -40,6 +40,9 @@ export class StudentsService {
             ...createStudentDto,
             contact_email: contact_email.toLowerCase(),
             user: user,
+            firstName: firstName.toLowerCase().trim(),
+            paternalSurname: paternalSurname.toLowerCase().trim(),
+            maternalSurname: maternalSurname.toLowerCase().trim()
         });
 
         // Inserta el usuario y el estudiante dentro de la misma transacción
@@ -70,7 +73,7 @@ export class StudentsService {
   }
 
   async findOne(id: string) {
-    
+    // TODO establecer queryBuilder para hacer consoltas concidentes y no con datos exactos
     // Rescatar usuario por su ID
     const user = await this.studentRepository.findOneBy({id: id})
     return user;
