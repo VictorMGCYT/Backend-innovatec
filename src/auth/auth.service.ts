@@ -40,12 +40,18 @@ export class AuthService {
 
     return {
       ...user,
+      token: this.getJwt( { email: user.email, id: user.id } )
     };
 
   }
 
   private getJwt( payload: JwtPayload ) {
     
+    // Aquí firmamos el token con nuestra palabra secreta
+    const token = this.jwtService.sign(payload);
+    // y devolvemos el token
+    return token;
+
   }
 
 }

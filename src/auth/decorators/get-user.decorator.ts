@@ -1,11 +1,21 @@
-import { createParamDecorator, ExecutionContext } from "@nestjs/common";
+import { createParamDecorator, ExecutionContext, InternalServerErrorException } from "@nestjs/common";
+import * as request from 'supertest';
 
 
 
 export const GetUser = createParamDecorator(
     (data, context: ExecutionContext) => {
 
-        // Todo extraer el usuario de la request, pero primero hacer la strategy
+        // El usuario es colocado en la request por la Strategy
+        // Ahora lo vamos a extraer para poder invocarlo facilmente en los parámetros de métodos
+        const request = context.switchToHttp().getRequest();
+        const user = request.user;
+
+        if( !user ){
+            throw new InternalServerErrorException('User not found in request')
+        }
+
+        return user;
 
     }
 )
