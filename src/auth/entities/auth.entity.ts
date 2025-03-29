@@ -1,5 +1,7 @@
 import { Student } from "src/users/students/entities/student.entity";
+import { text } from "stream/consumers";
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { UserRoles } from "../interfaces/user-roles.interface";
 
 
 
@@ -33,6 +35,12 @@ export class Users {
         nullable: false
     })
     isActive: boolean
+
+    @Column({
+        type: 'text',
+        enum: UserRoles
+    })
+    role: string
 
     @CreateDateColumn()
     createdAt: Date;

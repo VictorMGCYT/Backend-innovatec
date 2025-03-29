@@ -6,6 +6,7 @@ import { DataSource, Repository } from 'typeorm';
 import { Student } from './entities/student.entity';
 import { Users } from 'src/auth/entities/auth.entity';
 import * as bcrypt from 'bcrypt'
+import { UserRoles } from 'src/auth/interfaces/user-roles.interface';
 
 @Injectable()
 export class StudentsService {
@@ -31,8 +32,8 @@ export class StudentsService {
         const user = this.userRepository.create({
             email: contact_email,
             password: bcrypt.hashSync(password, 10),
+            role: UserRoles.STUDENT
         });
-
         // Crea el estudiante
         const student = this.studentRepository.create({
             ...createStudentDto,

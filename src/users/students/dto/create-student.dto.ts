@@ -1,4 +1,5 @@
-import { IsBoolean, IsEmail, IsOptional, IsString, IsStrongPassword, MaxLength, MinLength } from "class-validator";
+import { IsBoolean, IsEmail, IsEnum, IsOptional, IsString, IsStrongPassword, MaxLength, MinLength } from "class-validator";
+import { UserRoles } from "src/auth/interfaces/user-roles.interface";
 
 
 export class CreateStudentDto {
@@ -40,6 +41,10 @@ export class CreateStudentDto {
     @MinLength(10)
     @MaxLength(10)
     phone_number: string;
+
+    @IsEnum(UserRoles)
+    @IsOptional()
+    role?: string;
 
     @IsString()
     @IsStrongPassword({
