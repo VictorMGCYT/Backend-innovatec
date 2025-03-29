@@ -4,6 +4,9 @@ import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { LoginDto } from './dto/login.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from './decorators/get-user.decorator';
+import { Auth } from './decorators/auth.decorator';
+import { UserRoles } from './interfaces/user-roles.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -18,9 +21,10 @@ export class AuthController {
 
 
   @Get('perfil')
-  @UseGuards( AuthGuard('jwt') )
-  validStrategy( @Req() req: Express.Request ){
-
-    return req.user
+  @Auth( UserRoles.COMPANY )
+  validStrategy( 
+    @GetUser() user
+  ){
+    return user
   }
 }

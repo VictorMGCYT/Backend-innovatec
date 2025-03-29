@@ -40,7 +40,7 @@ export class Users {
         type: 'text',
         enum: UserRoles
     })
-    role: string
+    role: string;
 
     @CreateDateColumn()
     createdAt: Date;
