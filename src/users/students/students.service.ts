@@ -7,6 +7,7 @@ import { Student } from './entities/student.entity';
 import { Users } from 'src/auth/entities/auth.entity';
 import * as bcrypt from 'bcrypt'
 import { UserRoles } from 'src/auth/interfaces/user-roles.interface';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
 @Injectable()
 export class StudentsService {
@@ -30,13 +31,14 @@ export class StudentsService {
     try {
         // Crea el usuario
         const user = this.userRepository.create({
-            email: contact_email,
+            email: contact_email.toLowerCase(),
             password: bcrypt.hashSync(password, 10),
             role: UserRoles.STUDENT
         });
         // Crea el estudiante
         const student = this.studentRepository.create({
             ...createStudentDto,
+            contact_email: contact_email.toLowerCase(),
             user: user,
         });
 
@@ -54,10 +56,15 @@ export class StudentsService {
     }
   }
 
-  async findAll() {
+  async findAll(paginationDto: PaginationDto) {
+    // Hacer la paginación
+    const { limit = 10, offset = 0 } = paginationDto
 
     // Rescatar todos los usuarios del backend
-    const users = await this.studentRepository.find()
+    const users = await this.studentRepository.find({
+      take: limit,
+      skip: offset,
+    })
 
     return users;
   }
