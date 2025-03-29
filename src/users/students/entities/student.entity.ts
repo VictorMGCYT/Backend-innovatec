@@ -1,5 +1,6 @@
+import { Users } from "src/auth/entities/auth.entity";
 import { text } from "stream/consumers";
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeUpdate, Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Student {
@@ -7,13 +8,24 @@ export class Student {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    // user_id referencia a la tabla users para el auth
+    @Column({
+        type: 'text',
+        nullable: false
+    })
+    firstName: string;
 
     @Column({
         type: 'text',
         nullable: false
     })
-    name: string;
+    paternalSurname: string;
+
+    @Column({
+        type: 'text',
+        nullable: false
+    })
+    maternalSurname: string;
+
 
     @Column({
         type: 'text',
@@ -48,20 +60,19 @@ export class Student {
 
     @Column({
         type: 'text',
-        unique: true
+        unique: true,
     })
     phone_number: string;
 
-    @Column({
-        type: 'bool',
-        default: true,
-        nullable: false
-    })
-    public_profile: boolean
+    @OneToOne(
+        () => Users,
+        (user) => user.student,
+        {
+            eager: true,
+            cascade: ['insert', 'update', 'remove']
+        },
+    )
+    @JoinColumn()
+    user: Users;
 
-    @CreateDateColumn()
-    createdAt: Date;
-
-    @DeleteDateColumn()
-    deletedAt: Date; 
 }

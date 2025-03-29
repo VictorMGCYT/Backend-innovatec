@@ -2,26 +2,53 @@ import { BadRequestException, Injectable, InternalServerErrorException } from '@
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Student } from './entities/student.entity';
+import { Users } from 'src/auth/entities/auth.entity';
+import * as bcrypt from 'bcrypt'
 
 @Injectable()
 export class StudentsService {
 
   constructor(
     @InjectRepository(Student)
-    private readonly studentRepository: Repository<Student>
+    private readonly studentRepository: Repository<Student>,
+    @InjectRepository(Users)
+    private readonly userRepository: Repository<Users>,
+    private readonly dataSource: DataSource
   ){}
 
   async create(createStudentDto: CreateStudentDto) {
-
+    const { contact_email, password } = createStudentDto
+    // Extraemos email y password del DTO para encriptar la contraseña, y hacer la insersión de
+    // email y password en la tabla Users para crear la relación con su student
+    // Inicia una transacción
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.startTransaction();
+    
     try {
-      
-      const student = await this.studentRepository.create(createStudentDto);
-      await this.studentRepository.save(student)
-      return student;
+        // Crea el usuario
+        const user = this.userRepository.create({
+            email: contact_email,
+            password: bcrypt.hashSync(password, 10),
+        });
 
+        // Crea el estudiante
+        const student = this.studentRepository.create({
+            ...createStudentDto,
+            user: user,
+        });
+
+        // Inserta el usuario y el estudiante dentro de la misma transacción
+        await queryRunner.manager.save(student);
+
+        // Si ambas inserciones fueron exitosas, realiza un commit
+        await queryRunner.commitTransaction();
+        
+        return student;
     } catch (error) {
+      // Si hay algún error, realiza un rollback para revertir ambas inserciones
+      await queryRunner.rollbackTransaction();
       this.handleDbExeptions(error);
     }
   }

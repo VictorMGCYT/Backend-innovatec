@@ -1,11 +1,19 @@
-import { IsBoolean, IsEmail, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
+import { IsBoolean, IsEmail, IsOptional, IsString, IsStrongPassword, MaxLength, MinLength } from "class-validator";
 
 
 export class CreateStudentDto {
 
     @IsString()
     @MinLength(1)
-    name: string;
+    firstName: string;
+
+    @IsString()
+    @MinLength(1)
+    paternalSurname: string;
+
+    @IsString()
+    @MinLength(1)
+    maternalSurname: string;
 
     @IsString()
     @MinLength(1)
@@ -32,6 +40,19 @@ export class CreateStudentDto {
     @MinLength(10)
     @MaxLength(10)
     phone_number: string;
+
+    @IsString()
+    @IsStrongPassword({
+        minLength: 6,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 0,
+    },
+    {
+        message: "Password must be contain min 6 chacacters, 1 letter in lowercase, 1 letter in uppercase and 1 number"
+    })
+    password: string;
 
 
 }
