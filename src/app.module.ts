@@ -7,6 +7,7 @@ import { StudentsModule } from './users/students/students.module';
 import { CompaniesModule } from './users/companies/companies.module';
 import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [ 
@@ -30,7 +31,9 @@ import { CommonModule } from './common/common.module';
 
     AuthModule,
     
-    CommonModule
+    CommonModule,
+    
+    CloudinaryModule
   ],
   controllers: [AppController],
   providers: [AppService],

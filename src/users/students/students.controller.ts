@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe, Query, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('students')
 export class StudentsController {
@@ -22,6 +23,14 @@ export class StudentsController {
   @Get('get/:id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.studentsService.findOne(id);
+  }
+
+  // Método post para subir el CV
+  @Post(':id/upload-cv')
+  @UseInterceptors(FileInterceptor('file')) // No es necesario pasar configuración aquí
+  async uploadCV(@Param('id') id: string, @UploadedFile() file: Express.Multer.File) {
+    const updatedStudent = await this.studentsService.updateStudentCV(id, file);
+    return { message: 'CV uploaded successfully', student: updatedStudent };
   }
 
   @Patch(':id')
