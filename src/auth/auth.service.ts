@@ -39,7 +39,8 @@ export class AuthService {
     }
 
     return {
-      ...user,
+      id: user.id,
+      email: user.email,
       token: this.getJwt( { email: user.email, id: user.id } )
     };
 
