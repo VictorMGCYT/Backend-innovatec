@@ -16,7 +16,11 @@ export class CloudinaryService {
   }
   
   async uploadFile(file: Express.Multer.File): Promise<string> {
-    
+
+    if(!file || !file.originalname || !file.buffer) {
+      throw new BadRequestException('File is required');
+    }
+    console.log(file)
     const fileName = file.originalname;
     const extension = path.extname(fileName);
 
@@ -29,8 +33,9 @@ export class CloudinaryService {
     return new Promise((resolve, reject) => {
       cloudinary.uploader.upload_stream(
         { 
-          resource_type: 'image', 
-          folder: 'cv_students',// Especificamos el nombre del archivo con su extensión
+          resource_type: 'auto', 
+          folder: 'cv_students',// Especificamos el nombre del archivo con su extensión\
+          access_mode: 'public',
         }, 
         (error, result) => {
           if (error) {

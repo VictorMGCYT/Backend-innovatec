@@ -22,13 +22,9 @@ export class StudentsService {
     private readonly cloudinaryService: CloudinaryService,
   ){}
 
+  // ******************************************************************************
   async create(createStudentDto: CreateStudentDto) {
-    const { 
-      contact_email, 
-      password, 
-      firstName, 
-      maternalSurname, 
-      paternalSurname } = createStudentDto
+    const { contact_email, password} = createStudentDto
 
     // Extraemos email y password del DTO para encriptar la contraseña, y hacer la insersión de
     // email y password en la tabla Users para crear la relación con su student
@@ -46,10 +42,6 @@ export class StudentsService {
         // Crea el estudiante
         const student = this.studentRepository.create({
             ...createStudentDto,
-            contact_email: contact_email.toLowerCase(),
-            firstName: firstName.toLowerCase().trim(),
-            paternalSurname: paternalSurname.toLowerCase().trim(),
-            maternalSurname: maternalSurname.toLowerCase().trim(),
             user: user,
         });
 
@@ -67,6 +59,7 @@ export class StudentsService {
     }
   }
 
+  // ******************************************************************************
   async findAll(paginationDto: PaginationDto) {
     // Hacer la paginación
     const { limit = 10, offset = 0 } = paginationDto
@@ -80,6 +73,7 @@ export class StudentsService {
     return users;
   }
 
+  // ******************************************************************************
   async findOne(id: string) {
     // TODO establecer queryBuilder para hacer consultas concidentes y no con datos exactos
     // Rescatar usuario por su ID
@@ -92,15 +86,28 @@ export class StudentsService {
     return user;
   }
 
-  update(id: number, updateStudentDto: UpdateStudentDto) {
-    return `This action updates a #${id} student`;
+  // ******************************************************************************
+  async update(id: string, updateStudentDto: UpdateStudentDto) {
+
+    let student = await this.findOne(id);
+
+    student = this.studentRepository.merge(student, updateStudentDto)
+
+    // Si se cambia el email, actualizar también el de 'user'
+    if (updateStudentDto.contact_email && student.user) {
+      student.user.email = updateStudentDto.contact_email.toLowerCase().trim();
+    }
+
+    return await this.studentRepository.save(student);
   }
 
+  // ******************************************************************************
   remove(id: number) {
     return `This action removes a #${id} student`;
   }
 
 
+  // ******************************************************************************
   // ! Subir el CV
   async updateStudentCV(id: string, file: Express.Multer.File): Promise<Student> {
     const student = await this.findOne(id);
@@ -116,6 +123,7 @@ export class StudentsService {
   }
 
 
+  // ******************************************************************************
   private handleDbExeptions(error: any){
 
     if(error.code === '23505'){

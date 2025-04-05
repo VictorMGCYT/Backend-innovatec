@@ -1,6 +1,6 @@
 import { Users } from "src/auth/entities/auth.entity";
 import { text } from "stream/consumers";
-import { BeforeUpdate, Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Student {
@@ -74,5 +74,20 @@ export class Student {
     )
     @JoinColumn()
     user: Users;
+
+    @BeforeInsert()
+    beforeInsertStudent(){
+        console.log('Before insert students')
+        this.contact_email = this.contact_email.toLowerCase().trim();
+        this.firstName = this.firstName.toLowerCase().trim().replaceAll(/\s+/g, ' ');
+        this.paternalSurname = this.paternalSurname.toLowerCase().trim().replaceAll(/\s+/g, ' ');
+        this.maternalSurname = this.maternalSurname.toLowerCase().trim().replaceAll(/\s+/g, ' ');
+        this.career = this.career.toLowerCase().trim().replaceAll(/\s+/g, ' ');
+    }
+
+    @BeforeUpdate()
+    beforeUpdateStudent(){
+       
+    }
 
 }

@@ -26,19 +26,22 @@ export class StudentsController {
   }
 
   // Método post para subir el CV
-  @Post(':id/upload-cv')
-  @UseInterceptors(FileInterceptor('file')) // No es necesario pasar configuración aquí
+  @Patch('/upload-cv/:id')
+  @UseInterceptors(FileInterceptor('file', { limits: { fileSize: 5 * 1024 * 1024 } })) // No es necesario pasar configuración aquí
   async uploadCV(@Param('id') id: string, @UploadedFile() file: Express.Multer.File) {
     const updatedStudent = await this.studentsService.updateStudentCV(id, file);
     return { message: 'CV uploaded successfully', student: updatedStudent };
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStudentDto: UpdateStudentDto) {
-    return this.studentsService.update(+id, updateStudentDto);
+  @Patch('update/:id')
+  update(
+    @Param('id', ParseUUIDPipe) id: string, 
+    @Body() updateStudentDto: UpdateStudentDto) 
+    {
+    return this.studentsService.update(id, updateStudentDto);
   }
 
-  @Delete(':id')
+  @Delete('delete/:id')
   remove(@Param('id') id: string) {
     return this.studentsService.remove(+id);
   }
