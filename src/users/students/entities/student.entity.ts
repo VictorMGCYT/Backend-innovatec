@@ -80,7 +80,6 @@ export class Student {
 
     @BeforeInsert()
     beforeInsertStudent(){
-        console.log('Before insert students')
         this.contact_email = this.contact_email.toLowerCase().trim();
         this.firstName = this.firstName.toLowerCase().trim().replaceAll(/\s+/g, ' ');
         this.paternalSurname = this.paternalSurname.toLowerCase().trim().replaceAll(/\s+/g, ' ');
@@ -89,8 +88,12 @@ export class Student {
     }
 
     @BeforeUpdate()
-    beforeUpdateStudent(){
-       
+    beforeUpdateStudent() {
+        if (this.contact_email) this.contact_email = this.contact_email.toLowerCase().trim();
+        if (this.firstName) this.firstName = this.firstName.toLowerCase().trim().replaceAll(/\s+/g, ' ');
+        if (this.paternalSurname) this.paternalSurname = this.paternalSurname.toLowerCase().trim().replaceAll(/\s+/g, ' ');
+        if (this.maternalSurname) this.maternalSurname = this.maternalSurname.toLowerCase().trim().replaceAll(/\s+/g, ' ');
+        if (this.career) this.career = this.career.toLowerCase().trim().replaceAll(/\s+/g, ' ');
     }
 
 }

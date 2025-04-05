@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { LoginDto } from './dto/login.dto';
@@ -32,7 +32,7 @@ export class AuthService {
     // Verificamos si el usuario existe en la base de datos y si la 
     // contraseña hace match
     if(!user){
-      throw new BadRequestException(`User with email: ${email} doesn't exist`)
+      throw new NotFoundException(`User with email: ${email} doesn't exist`)
     }
     if( !bcrypt.compareSync(password, user.password) ){
       throw new BadRequestException(`Password is't valid`)
