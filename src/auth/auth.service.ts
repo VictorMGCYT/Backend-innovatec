@@ -26,7 +26,7 @@ export class AuthService {
     // Buscamos el usuario con ese email y devolvemos solo password, email e id
     const user = await this.userRepository.findOne({
       where: {email},
-      select: { password: true, email: true, id: true }
+      select: { password: true, email: true, id: true, role: true }
     })
 
     // Verificamos si el usuario existe en la base de datos y si la 
@@ -41,7 +41,7 @@ export class AuthService {
     return {
       id: user.id,
       email: user.email,
-      token: this.getJwt( { email: user.email, id: user.id } )
+      token: this.getJwt( { email: user.email, id: user.id, role: user.role } )
     };
 
   }

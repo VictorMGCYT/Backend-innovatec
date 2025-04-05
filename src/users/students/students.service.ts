@@ -9,6 +9,8 @@ import * as bcrypt from 'bcrypt'
 import { UserRoles } from 'src/auth/interfaces/user-roles.interface';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { validate as isUUID } from 'uuid';
+import { use } from 'passport';
 
 @Injectable()
 export class StudentsService {
@@ -65,25 +67,42 @@ export class StudentsService {
     const { limit = 10, offset = 0 } = paginationDto
 
     // Rescatar todos los usuarios del backend
-    const users = await this.studentRepository.find({
+    const students = await this.studentRepository.find({
       take: limit,
       skip: offset,
     })
 
-    return users;
+    const studentsWhithoutPassword = students.map( (student) => {
+      const { password, ...rest } = student.user;
+      student.user = {
+        ...rest,
+        password: ''
+      };
+
+      return student;
+    })
+
+    return studentsWhithoutPassword;
   }
 
   // ******************************************************************************
-  async findOne(id: string) {
+  async findOne(term: string) {
     // TODO establecer queryBuilder para hacer consultas concidentes y no con datos exactos
     // Rescatar usuario por su ID
-    const user = await this.studentRepository.findOneBy({id: id})
-
-    if(!user){
-      throw new NotFoundException(`Student with id ${id} not found`)
+    let student: Student | null
+    if( isUUID(term) ){
+      student = await this.studentRepository.findOneBy({id: term})
+    }else{
+      student = await this.studentRepository.findOneBy({contact_email: term.toLowerCase().trim()})
     }
-    
-    return user;
+
+    if(!student){
+      throw new NotFoundException(`Student with id ${term} not found`)
+    }
+
+    const { password, ...rest } = student.user;
+    student.user = {...rest, password: ''};
+    return student;
   }
 
   // ******************************************************************************

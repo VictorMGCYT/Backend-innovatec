@@ -20,9 +20,9 @@ export class StudentsController {
     return this.studentsService.findAll(paginationDto);
   }
 
-  @Get('get/:id')
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.studentsService.findOne(id);
+  @Get('get/:term')
+  findOne(@Param('term') term: string) {
+    return this.studentsService.findOne(term);
   }
 
   // Método post para subir el CV
