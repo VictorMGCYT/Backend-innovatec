@@ -35,15 +35,17 @@ export class Student {
 
     @Column({
         type: 'text',
-        nullable: true
+        nullable: true,
+        array: true
     })
-    skills?: string;
+    skills?: string[];
 
     @Column({
         type: 'text',
-        nullable: true
+        nullable: true,
+        array: true
     })
-    languages?: string;
+    languages?: string[];
 
     @Column({
         type: 'text',

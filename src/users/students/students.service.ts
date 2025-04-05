@@ -108,7 +108,11 @@ export class StudentsService {
   // ******************************************************************************
   async update(id: string, updateStudentDto: UpdateStudentDto) {
 
-    let student = await this.findOne(id);
+    let student = await this.studentRepository.findOneBy({id});
+
+    if(!student){
+      throw new NotFoundException(`Student with id ${id} not found`)
+    }
 
     student = this.studentRepository.merge(student, updateStudentDto)
 
@@ -143,9 +147,10 @@ export class StudentsService {
   // ******************************************************************************
   // ! Subir el CV
   async updateStudentCV(id: string, file: Express.Multer.File): Promise<Student> {
-    const student = await this.findOne(id);
-    if (!student) {
-      throw new NotFoundException('Student not found'); 
+    const student = await this.studentRepository.findOneBy({id});
+
+    if(!student){
+      throw new NotFoundException(`Student with id ${id} not found`)
     }
 
     // Subimos el archivo a Cloudinary y obtenemos la URL

@@ -1,4 +1,4 @@
-import { IsBoolean, IsEmail, IsEnum, IsOptional, IsString, IsStrongPassword, MaxLength, MinLength } from "class-validator";
+import { IsArray, IsBoolean, IsEmail, IsEnum, IsOptional, IsString, IsStrongPassword, MaxLength, MinLength } from "class-validator";
 import { UserRoles } from "src/auth/interfaces/user-roles.interface";
 
 
@@ -20,13 +20,13 @@ export class CreateStudentDto {
     @MinLength(1)
     career: string;
 
-    @IsString()
+    @IsArray()
     @IsOptional()
-    skills?: string;
+    skills?: string[];
 
-    @IsString()
+    @IsArray()
     @IsOptional()
-    languages?: string;
+    languages?: string[];
 
     @IsString()
     @IsOptional()
