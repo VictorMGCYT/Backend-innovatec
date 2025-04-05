@@ -75,6 +75,9 @@ export class Student {
     @JoinColumn()
     user: Users;
 
+    @DeleteDateColumn()
+    deletedAt: Date; 
+
     @BeforeInsert()
     beforeInsertStudent(){
         console.log('Before insert students')

@@ -82,7 +82,7 @@ export class StudentsService {
     if(!user){
       throw new NotFoundException(`Student with id ${id} not found`)
     }
-
+    
     return user;
   }
 
@@ -102,8 +102,22 @@ export class StudentsService {
   }
 
   // ******************************************************************************
-  remove(id: number) {
-    return `This action removes a #${id} student`;
+  async remove(id: string) {
+
+    const student = await this.findOne(id);
+    const { contact_email } = student;
+
+    const user = await this.userRepository.findOneBy({
+      email: contact_email.toLowerCase().trim(),
+    })
+
+    if (!user) {
+      throw new NotFoundException(`User with email ${contact_email} not found`);
+    }
+    await this.userRepository.softRemove(user);
+    await this.studentRepository.softRemove(student);
+    
+    return `User removed successfully`;
   }
 
 
