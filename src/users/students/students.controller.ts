@@ -21,6 +21,7 @@ export class StudentsController {
   }
 
   @Get('get/:term')
+  @Auth()
   findOne(@Param('term') term: string) {
     return this.studentsService.findOne(term);
   }

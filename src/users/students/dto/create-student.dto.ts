@@ -1,4 +1,4 @@
-import { IsArray, IsBoolean, IsEmail, IsEnum, IsOptional, IsString, IsStrongPassword, MaxLength, MinLength } from "class-validator";
+import { IsArray, IsBoolean, IsEmail, IsEnum, IsIn, IsOptional, IsString, IsStrongPassword, MaxLength, MinLength } from "class-validator";
 import { UserRoles } from "src/auth/interfaces/user-roles.interface";
 
 
@@ -18,6 +18,17 @@ export class CreateStudentDto {
 
     @IsString()
     @MinLength(1)
+    @IsIn([
+        "Ingeniería en Sistemas Computacionales",
+        "Ingeniería Informática",
+        "Ingeniería en Gestión Empresarial",
+        "Ingeniería en Logistica",
+        "Ingeniería Industrial",
+        "Ingeniería Aeronáutica",
+        "Ingeniería Forestal",
+        "Ingeniería en Materiales",
+        // Todo ampliar la lista con todas las carreras disponibles en la universidad
+    ])
     career: string;
 
     @IsArray()
