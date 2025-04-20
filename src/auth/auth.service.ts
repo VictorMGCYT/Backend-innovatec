@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt'
 import { JwtPayload } from './interfaces/jwt-payload.interface';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -44,6 +45,27 @@ export class AuthService {
       token: this.getJwt( { email: user.email, id: user.id, role: user.role } )
     };
 
+  }
+
+  async changePassword( updatePasswordDto: UpdatePasswordDto){
+    const {id, password, newPassword} = updatePasswordDto;
+
+    const user = await this.userRepository.findOneBy({id});
+    if(!user){
+      throw new NotFoundException(`User with id: ${id} doesn't exist`)
+    }
+
+    if(!bcrypt.compareSync(password, user.password)){
+      throw new BadRequestException(`Password is't valid`)
+    }
+
+    const hashPassword = bcrypt.hashSync(newPassword, 10);
+    await this.userRepository.save({
+      ...user,
+      password: hashPassword
+    })
+
+    return "Password updated successfully"
   }
 
   private getJwt( payload: JwtPayload ) {

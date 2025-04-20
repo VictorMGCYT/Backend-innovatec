@@ -14,6 +14,38 @@ export class CloudinaryService {
       api_secret: this.configService.get('CLOUDINARY_API_SECRET'),
     });
   }
+
+  async deleteFile(fileUrl: string): Promise<void> {
+    try {
+      // Validamos que sea una URL válida de Cloudinary
+      if (!fileUrl.includes('/upload/')) {
+        throw new BadRequestException('Invalid Cloudinary URL');
+      }
+  
+      // Extraer la parte después de "/upload/"
+      const parts = fileUrl.split('/upload/')[1]; // "v1743886059/cv_students/hcrdqlciknmibip5nfhp.pdf"
+  
+      // Remover la versión y la extensión .pdf
+      const pathWithoutVersion = parts.split('/').slice(1).join('/'); // "cv_students/hcrdqlciknmibip5nfhp.pdf"
+      const publicId = pathWithoutVersion.replace('.pdf', '');        // "cv_students/hcrdqlciknmibip5nfhp"
+      console.log(`Public ID: ${publicId}`);
+      // Eliminar usando Cloudinary
+      await new Promise<void>((resolve, reject) => {
+        cloudinary.uploader.destroy(publicId, {}, (error, result) => {
+          if (error) return reject(error);
+          if (result.result !== 'ok') {
+            return reject(new Error('Failed to delete file'));
+          }
+          resolve();
+        });
+      });
+  
+      console.log(`Archivo eliminado: ${publicId}`);
+    } catch (error) {
+      console.error('Error al eliminar archivo:', error);
+      throw new BadRequestException('Error deleting file');
+    }
+  }
   
   async uploadFile(file: Express.Multer.File): Promise<string> {
 

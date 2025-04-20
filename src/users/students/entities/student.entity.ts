@@ -77,6 +77,9 @@ export class Student {
     @JoinColumn()
     user: Users;
 
+    @Column({ type: "date", nullable: false})
+    createdAt: Date;
+
     @DeleteDateColumn()
     deletedAt: Date; 
 
@@ -86,7 +89,8 @@ export class Student {
         this.firstName = this.firstName.toLowerCase().trim().replaceAll(/\s+/g, ' ');
         this.paternalSurname = this.paternalSurname.toLowerCase().trim().replaceAll(/\s+/g, ' ');
         this.maternalSurname = this.maternalSurname.toLowerCase().trim().replaceAll(/\s+/g, ' ');
-        this.career = this.career.toLowerCase().trim().replaceAll(/\s+/g, ' ');
+        this.career = this.career.trim().replaceAll(/\s+/g, ' ');
+        this.createdAt = new Date();
     }
 
     @BeforeUpdate()
@@ -95,7 +99,7 @@ export class Student {
         if (this.firstName) this.firstName = this.firstName.toLowerCase().trim().replaceAll(/\s+/g, ' ');
         if (this.paternalSurname) this.paternalSurname = this.paternalSurname.toLowerCase().trim().replaceAll(/\s+/g, ' ');
         if (this.maternalSurname) this.maternalSurname = this.maternalSurname.toLowerCase().trim().replaceAll(/\s+/g, ' ');
-        if (this.career) this.career = this.career.toLowerCase().trim().replaceAll(/\s+/g, ' ');
+        if (this.career) this.career = this.career.trim().replaceAll(/\s+/g, ' ');
     }
 
 }

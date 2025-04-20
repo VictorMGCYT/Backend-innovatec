@@ -153,6 +153,12 @@ export class StudentsService {
       throw new NotFoundException(`Student with id ${id} not found`)
     }
 
+    const cvStudent = student.cv_url;
+
+    if(cvStudent) {
+      await this.cloudinaryService.deleteFile(cvStudent);
+    }
+
     // Subimos el archivo a Cloudinary y obtenemos la URL
     const cvUrl = await this.cloudinaryService.uploadFile(file);
     student.cv_url = cvUrl;
